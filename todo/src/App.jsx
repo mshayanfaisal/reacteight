@@ -7,17 +7,6 @@ function App() {
   const [filterTodos, setFilterTodos] = useState([]);
   const [filterInput, setFilterInput] = useState("");
 
-  // const filterTodosFunc = () => {
-  //   if (todos.includes(filterInput)) {
-  //     if (filterInput !== "") filterTodos.push(filterInput);
-  //     setFilterTodos([...filterTodos]);
-  //     setFilterInput("");
-  //   } else {
-  //     alert("😊 enter vaild todo 😊😂");
-  //     setFilterInput(" ");
-  //   }
-  // };
-
   const filterTodosFunc = () => {
     if (todos.includes(filterInput)) {
       const index = todos.indexOf(filterInput);
@@ -45,7 +34,9 @@ function App() {
   };
 
   const deleteItemInFilterTodos = (indexToRemve) => {
-    setFilterTodos(filterTodos.filter((element, index) => index !== indexToRemve));
+    setFilterTodos(
+      filterTodos.filter((element, index) => index !== indexToRemve)
+    );
   };
 
   const handleCheck = (event, index) => {
@@ -53,18 +44,14 @@ function App() {
       console.log("if", event.target.value);
       setChecked([...isChecked, index]);
     } else {
-      setChecked(isChecked.filter((element, idx) => idx !== index));
-      console.log("else", event.target.value);
+      console.log(isChecked, index);
+      setChecked(isChecked.filter((checkedIndex) => checkedIndex !== index));
     }
   };
-  console.log("isChecked", isChecked);
 
   return (
     <div className="container">
       <input
-        type="text"
-        name=""
-        id=""
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Enter your Todo..."
@@ -99,15 +86,9 @@ function App() {
 
       {/* //// second input */}
       <input
-        type="text"
-        name=""
-        id=""
         value={filterInput}
         onChange={(e) => setFilterInput(e.target.value)}
         placeholder="Enter your Todo..."
-        onKeyDown={(e) => {
-          e.key === "Enter" && { filterTodosFunc };
-        }}
       />
       <button onClick={filterTodosFunc} className="btn btn-primary mx-3">
         Submit
