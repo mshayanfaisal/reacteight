@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -51,61 +52,71 @@ function App() {
 
   return (
     <div className="container">
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Enter your Todo..."
-        onKeyDown={(e) => {
-          e.key === "Enter" && { addItemToList };
-        }}
-      />
-      <button onClick={addItemToList} className="btn btn-primary mx-3">
-        Submit
-      </button>
-      {todos.map((element, index) => (
-        <li key={index}>
+      <div className="row align-items-center">
+        <div className="col-6">
+          <h3>Todo App</h3>
           <input
-            type="checkbox"
-            checked={isChecked.includes(index)}
-            onChange={(event) => {
-              handleCheck(event, index);
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter your Todo..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                addItemToList();
+              }
             }}
           />
 
-          {element}
-          <button
-            onClick={() => {
-              deleteItem(index);
-            }}
-            className="btn btn-danger mx-3"
-          >
-            Delete
+          <button onClick={addItemToList} className="btn btn-primary mx-3">
+            Submit
           </button>
-        </li>
-      ))}
+          {todos.map((element, index) => (
+            <li key={index} className="mb-2">
+              <input
+                type="checkbox"
+                checked={isChecked.includes(index)}
+                onChange={(event) => {
+                  handleCheck(event, index);
+                }}
+              />
 
-      {/* //// second input */}
-      <input
-        value={filterInput}
-        onChange={(e) => setFilterInput(e.target.value)}
-        placeholder="Enter your Todo..."
-      />
-      <button onClick={filterTodosFunc} className="btn btn-primary mx-3">
-        Submit
-      </button>
-      {filterTodos.map((element, index) => (
-        <li key={index}>
-          {element}
-          <button
-            onClick={() => {
-              deleteItemInFilterTodos(index);
-            }}
-            className="btn btn-danger mx-3"
-          >
-            Delete
+              {element}
+              <button
+                onClick={() => {
+                  deleteItem(index);
+                }}
+                className="btn btn-danger mx-3"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </div>
+        {/* //// second input */}
+        <div className="col-6">
+          <h3>Checking Todo</h3>
+          <input
+            value={filterInput}
+            onChange={(e) => setFilterInput(e.target.value)}
+            placeholder="Enter your Todo to check..."
+          />
+          <button onClick={filterTodosFunc} className="btn btn-primary mx-3">
+            Submit
           </button>
-        </li>
-      ))}
+          {filterTodos.map((element, index) => (
+            <li key={index} className="mb-2">
+              {element}
+              <button
+                onClick={() => {
+                  deleteItemInFilterTodos(index);
+                }}
+                className="btn btn-danger mx-3"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
