@@ -1,18 +1,27 @@
 import { useState } from "react";
 import "./App.css";
+import ProgressBar from "react-progressbar";
+import UnlockImageComponent from "./components/unlockImage";
+import LockImageComponent from "./components/lockimage";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
   const [isChecked, setChecked] = useState([]);
+
   const [filterTodos, setFilterTodos] = useState([]);
   const [filterInput, setFilterInput] = useState("");
+
+  const [credentials, setCredentials] = useState([]);
+  const [credentialInput, setCredentialInput] = useState("");
+
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [showUnlock, setShowUnlock] = useState(false);
 
   const filterTodosFunc = () => {
     if (todos.includes(filterInput)) {
       const index = todos.indexOf(filterInput);
       setChecked([...isChecked, index]);
-      console.log("index", index);
       if (index !== -1) {
         if (filterInput !== "") filterTodos.push(filterInput);
         setFilterTodos([...filterTodos]);
@@ -42,20 +51,52 @@ function App() {
 
   const handleCheck = (event, index) => {
     if (event.target.checked) {
-      console.log("if", event.target.value);
       setChecked([...isChecked, index]);
     } else {
-      console.log(isChecked, index);
       setChecked(isChecked.filter((checkedIndex) => checkedIndex !== index));
+    }
+    calculateProgress();
+  };
+
+  const addingCredentials = () => {
+    if (credentialInput !== "") {
+      credentials.push({ value: credentialInput, hidden: true });
+      setCredentials([...credentials]);
+      setCredentialInput("");
+      calculateProgress();
+    }
+  };
+
+  const deleteItemInCredentials = (indexToRemve) => {
+    setCredentials(
+      credentials.filter((element, index) => index !== indexToRemve)
+    );
+    calculateProgress();
+  };
+
+  const calculateProgress = () => {
+    const checkedCredentials = credentials.filter((credential, index) =>
+      isChecked.includes(index)
+    );
+    const progress = Math.trunc(
+      (checkedCredentials.length / credentials.length) * 100
+    );
+    setProgressPercentage(progress);
+
+    if (checkedCredentials.length > 0) {
+      setShowUnlock(checkedCredentials.length === credentials.length);
+    } else {
+      setShowUnlock(false);
     }
   };
 
   return (
-    <div className="container">
-      <div className="row align-items-center">
-        <div className="col-6">
-          <h3>Todo App</h3>
+    <div className="container text-center">
+      <div className="row row-cols-2">
+        <div className="col">
+          <h3>🆃🅾🅳🅾 🅰🅿🅿</h3>
           <input
+            className="my-4"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Enter your Todo..."
@@ -67,11 +108,12 @@ function App() {
           />
 
           <button onClick={addItemToList} className="btn btn-primary mx-3">
-            Submit
+            Add your Todo
           </button>
           {todos.map((element, index) => (
-            <li key={index} className="mb-2">
+            <li key={index} className="mb-2 my-3">
               <input
+                className="mx-2"
                 type="checkbox"
                 checked={isChecked.includes(index)}
                 onChange={(event) => {
@@ -84,37 +126,84 @@ function App() {
                 onClick={() => {
                   deleteItem(index);
                 }}
-                className="btn btn-danger mx-3"
+                className="btn btn-danger mx-3 delete"
               >
                 Delete
               </button>
             </li>
           ))}
         </div>
-        {/* //// second input */}
-        <div className="col-6">
-          <h3>Checking Todo</h3>
+
+        {/* //// checking todo input */}
+        <div className="col">
+          <h3>🅲🅷🅴🅲🅺🅸🅽🅶 🆃🅾🅳🅾</h3>
           <input
+            className="my-4"
             value={filterInput}
             onChange={(e) => setFilterInput(e.target.value)}
             placeholder="Enter your Todo to check..."
           />
           <button onClick={filterTodosFunc} className="btn btn-primary mx-3">
-            Submit
+            Check Todo
           </button>
           {filterTodos.map((element, index) => (
-            <li key={index} className="mb-2">
+            <li key={index} className="mb-2 my-3">
               {element}
               <button
                 onClick={() => {
                   deleteItemInFilterTodos(index);
                 }}
-                className="btn btn-danger mx-3"
+                className="btn btn-danger mx-3 delete"
               >
                 Delete
               </button>
             </li>
           ))}
+        </div>
+
+        {/* //// credentials input */}
+        <div className="col my-5">
+          <h3>🅲🆁🅴🅳🅴🅽🆃🅸🅰🅻🆂</h3>
+          <input
+            className="my-4"
+            value={credentialInput}
+            onChange={(e) => setCredentialInput(e.target.value)}
+            placeholder="Enter your credential..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                addingCredentials();
+              }
+            }}
+          />
+          <button onClick={addingCredentials} className="btn btn-primary mx-3">
+            Add your Credential
+          </button>
+          {credentials.map((element, index) => (
+            <li key={index} className="mb-2 my-3">
+              <span>
+                {element.hidden
+                  ? "*".repeat(element.value.length)
+                  : element.value}
+              </span>
+              {/* {element} */}
+              <button
+                onClick={() => {
+                  deleteItemInCredentials(index);
+                }}
+                className="btn btn-danger mx-3 delete"
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </div>
+        {/* //// progress lock */}
+        <div className="col my-5">
+          <h3>🆂🆃🅰🆃🆄🆂</h3>
+          {showUnlock ? <UnlockImageComponent /> : <LockImageComponent />}
+          <ProgressBar completed={progressPercentage}>
+            <div className="progressbar-label">{`${progressPercentage}%`}</div>
+          </ProgressBar>
         </div>
       </div>
     </div>
