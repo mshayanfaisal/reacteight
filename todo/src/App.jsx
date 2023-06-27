@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import ProgressBar from "react-progressbar";
 import UnlockImageComponent from "./components/unlockImage";
@@ -17,6 +17,10 @@ function App() {
 
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [showUnlock, setShowUnlock] = useState(false);
+
+  useEffect(() => {
+    calculateProgress();
+  }, [isChecked]);
 
   const filterTodosFunc = () => {
     if (todos.includes(filterInput)) {
@@ -43,9 +47,9 @@ function App() {
     setTodos(todos.filter((element, index) => index !== indexToRemve));
   };
 
-  const deleteItemInFilterTodos = (indexToRemve) => {
+  const deleteItemInFilterTodos = (indexToRemove) => {
     setFilterTodos(
-      filterTodos.filter((element, index) => index !== indexToRemve)
+      filterTodos.filter((element, index) => index !== indexToRemove)
     );
   };
 
@@ -55,7 +59,6 @@ function App() {
     } else {
       setChecked(isChecked.filter((checkedIndex) => checkedIndex !== index));
     }
-    calculateProgress();
   };
 
   const addingCredentials = () => {
@@ -63,13 +66,12 @@ function App() {
       credentials.push({ value: credentialInput, hidden: true });
       setCredentials([...credentials]);
       setCredentialInput("");
-      calculateProgress();
     }
   };
 
-  const deleteItemInCredentials = (indexToRemve) => {
+  const deleteItemInCredentials = (itemToRemove) => {
     setCredentials(
-      credentials.filter((element, index) => index !== indexToRemve)
+      credentials.filter((element, index) => index !== itemToRemove)
     );
     calculateProgress();
   };
@@ -82,6 +84,7 @@ function App() {
       (checkedCredentials.length / credentials.length) * 100
     );
     setProgressPercentage(progress);
+    console.log(progress);
 
     if (checkedCredentials.length > 0) {
       setShowUnlock(checkedCredentials.length === credentials.length);
@@ -110,28 +113,32 @@ function App() {
           <button onClick={addItemToList} className="btn btn-primary mx-3">
             Add your Todo
           </button>
-          {todos.map((element, index) => (
-            <li key={index} className="mb-2 my-3">
-              <input
-                className="mx-2"
-                type="checkbox"
-                checked={isChecked.includes(index)}
-                onChange={(event) => {
-                  handleCheck(event, index);
-                }}
-              />
+          <div className="scroll-container">
+            <ul className="list">
+              {todos.map((element, index) => (
+                <li key={index} className="mb-2 my-3">
+                  <input
+                    className="mx-2"
+                    type="checkbox"
+                    checked={isChecked.includes(index)}
+                    onChange={(event) => {
+                      handleCheck(event, index);
+                    }}
+                  />
 
-              {element}
-              <button
-                onClick={() => {
-                  deleteItem(index);
-                }}
-                className="btn btn-danger mx-3 delete"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+                  {element}
+                  <button
+                    onClick={() => {
+                      deleteItem(index);
+                    }}
+                    className="btn btn-danger mx-3 delete"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* //// checking todo input */}
@@ -146,19 +153,23 @@ function App() {
           <button onClick={filterTodosFunc} className="btn btn-primary mx-3">
             Check Todo
           </button>
-          {filterTodos.map((element, index) => (
-            <li key={index} className="mb-2 my-3">
-              {element}
-              <button
-                onClick={() => {
-                  deleteItemInFilterTodos(index);
-                }}
-                className="btn btn-danger mx-3 delete"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+          <div className="scroll-container">
+            <ul className="list">
+              {filterTodos.map((element, index) => (
+                <li key={index} className="mb-2 my-3">
+                  {element}
+                  <button
+                    onClick={() => {
+                      deleteItemInFilterTodos(index);
+                    }}
+                    className="btn btn-danger mx-3 delete"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* //// credentials input */}
@@ -178,24 +189,27 @@ function App() {
           <button onClick={addingCredentials} className="btn btn-primary mx-3">
             Add your Credential
           </button>
-          {credentials.map((element, index) => (
-            <li key={index} className="mb-2 my-3">
-              <span>
-                {element.hidden
-                  ? "*".repeat(element.value.length)
-                  : element.value}
-              </span>
-              {/* {element} */}
-              <button
-                onClick={() => {
-                  deleteItemInCredentials(index);
-                }}
-                className="btn btn-danger mx-3 delete"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
+          <div className="scroll-container">
+            <ul className="list">
+              {credentials.map((element, index) => (
+                <li key={index} className="mb-2 my-3">
+                  <span>
+                    {element.hidden
+                      ? "*".repeat(element.value.length)
+                      : element.value}
+                  </span>
+                  <button
+                    onClick={() => {
+                      deleteItemInCredentials(index);
+                    }}
+                    className="btn btn-danger mx-3 delete"
+                  >
+                    Delete
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
         {/* //// progress lock */}
         <div className="col my-5">
